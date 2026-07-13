@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knife Collection — For Sale</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0e1824;
+      color: #e8edf4;
+      min-height: 100vh;
+    }
+
+    /* ---- header ---- */
+    header {
+      background: #15294d;
+      border-bottom: 3px solid #bd9540;
+      padding: 32px 40px 28px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    header .brand {
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      color: #bd9540;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+    header .count {
+      font-size: 13px;
+      color: #aebbd0;
+      padding-bottom: 4px;
+    }
+
+    /* ---- grid ---- */
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 28px 80px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    /* ---- card ---- */
+    .card {
+      background: #1a2d4a;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #253d62;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.45);
+    }
+    .card.has-gallery {
+      cursor: pointer;
+    }
+    .card-img {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: #0e1824;
+      overflow: hidden;
+    }
+    .card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .card:hover .card-img img {
+      transform: scale(1.04);
+    }
+    .no-photo {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: #4a6080;
+    }
+    .id-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(21,41,77,0.85);
+      color: #bd9540;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 3px 8px;
+      border-radius: 4px;
+      backdrop-filter: blur(4px);
+    }
+    .gallery-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #bd9540;
+      color: #0e1824;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .card-body {
+      padding: 18px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .card-body h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #e8edf4;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .desc {
+      font-size: 12px;
+      color: #7d96b8;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .price {
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: auto;
+      color: #e6c878;
+      letter-spacing: -0.01em;
+    }
+
+    /* ---- lightbox ---- */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 10, 18, 0.96);
+      z-index: 1000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #lightbox.open { display: flex; }
+
+    #lb-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-size: 28px;
+      color: #bd9540;
+      cursor: pointer;
+      line-height: 1;
+      background: none;
+      border: none;
+      padding: 4px 10px;
+    }
+    #lb-close:hover { color: #e6c878; }
+
+    #lb-title {
+      position: absolute;
+      top: 22px;
+      left: 28px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #aebbd0;
+      letter-spacing: 0.06em;
+    }
+
+    #lb-main {
+      width: 100%;
+      max-width: 900px;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    #lb-img {
+      max-width: 100%;
+      max-height: 78vh;
+      object-fit: contain;
+      border-radius: 6px;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.7);
+    }
+    #lb-prev, #lb-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(21,41,77,0.75);
+      border: 1px solid #bd9540;
+      color: #bd9540;
+      font-size: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(6px);
+      transition: background 0.15s;
+    }
+    #lb-prev:hover, #lb-next:hover { background: #15294d; }
+    #lb-prev { left: -22px; }
+    #lb-next { right: -22px; }
+
+    #lb-thumbs {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 900px;
+      padding: 0 16px;
+    }
+    .lb-thumb {
+      width: 60px;
+      height: 45px;
+      object-fit: cover;
+      border-radius: 4px;
+      cursor: pointer;
+      opacity: 0.55;
+      border: 2px solid transparent;
+      transition: opacity 0.15s, border-color 0.15s;
+    }
+    .lb-thumb.active, .lb-thumb:hover {
+      opacity: 1;
+      border-color: #bd9540;
+    }
+    #lb-counter {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #7d96b8;
+      letter-spacing: 0.08em;
+    }
+
+    /* ---- filter bar ---- */
+    .filter-bar {
+      background: #12213a;
+      border-bottom: 1px solid #1e3358;
+      padding: 16px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .filter-bar label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: #7d96b8;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .filter-search {
+      flex: 1;
+      min-width: 200px;
+      max-width: 420px;
+      background: #1a2d4a;
+      border: 1px solid #2a4268;
+      border-radius: 6px;
+      color: #e8edf4;
+      font-size: 14px;
+      padding: 8px 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .filter-search:focus { border-color: #bd9540; }
+    .filter-search::placeholder { color: #4a6080; }
+    .filter-divider {
+      width: 1px;
+      height: 28px;
+      background: #1e3358;
+      flex-shrink: 0;
+    }
+    .price-range {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .filter-price {
+      width: 90px;
+      background: #1a2d4a;
+      border: 1px solid #2a4268;
+      border-radius: 6px;
+      color: #e8edf4;
+      font-size: 14px;
+      padding: 8px 10px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .filter-price:focus { border-color: #bd9540; }
+    .filter-price::placeholder { color: #4a6080; }
+    .price-sep { color: #4a6080; font-size: 13px; }
+    .filter-count {
+      margin-left: auto;
+      font-size: 12px;
+      color: #4a6080;
+      white-space: nowrap;
+    }
+    .filter-clear {
+      background: none;
+      border: 1px solid #2a4268;
+      border-radius: 6px;
+      color: #7d96b8;
+      font-size: 12px;
+      padding: 7px 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .filter-clear:hover { border-color: #bd9540; color: #bd9540; }
+
+    /* ---- footer ---- */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 11px;
+      color: #3a5070;
+      letter-spacing: 0.1em;
+      border-top: 1px solid #1a2d4a;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand">Custom Knife Collection</div>
+    <h1>For Sale</h1>
+  </div>
+  <div class="count">109 knives available</div>
+</header>
+
+<div class="filter-bar">
+  <label>Search</label>
+  <input class="filter-search" id="f-search" type="text" placeholder="maker, model, description…" autocomplete="off">
+  <div class="filter-divider"></div>
+  <label>Price</label>
+  <div class="price-range">
+    <input class="filter-price" id="f-min" type="number" placeholder="Min" min="0">
+    <span class="price-sep">—</span>
+    <input class="filter-price" id="f-max" type="number" placeholder="Max" min="0">
+  </div>
+  <button class="filter-clear" id="f-clear">Clear</button>
+  <span class="filter-count" id="f-count"></span>
+</div>
+
+<main>
+  <div class="grid">
+
+    <div class="card has-gallery" data-gallery="2" data-imgs='["images/2a.jpeg", "images/2b.jpeg"]' data-search="dwaine carrillo kon·dor with clear pelican case" data-price="1700">
+      <div class="card-img">
+        <img src="images/2a.jpeg" alt="Dwaine Carrillo — Kon·Dor" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 02</span>
+      </div>
+      <div class="card-body">
+        <h2>Dwaine Carrillo — Kon·Dor</h2>
+        <p class="desc">With clear pelican case</p>
+        <div class="price">$1,700</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="4" data-imgs='["images/4a.jpeg", "images/4b.jpeg"]' data-search="mick strider sng conceal carry in black. missing its clip and has been carried." data-price="525">
+      <div class="card-img">
+        <img src="images/4a.jpeg" alt="Mick Strider — SnG" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 04</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — SnG</h2>
+        <p class="desc">Conceal Carry in Black. Missing its clip and has been carried.</p>
+        <div class="price">$525</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="5" data-imgs='["images/5a.jpeg", "images/5b.jpeg"]' data-search="mick strider sng conceal carry in ranger green. some scratch marks on the face of the blade." data-price="600">
+      <div class="card-img">
+        <img src="images/5a.jpeg" alt="Mick Strider — SnG" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 05</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — SnG</h2>
+        <p class="desc">Conceal Carry in Ranger Green. Some scratch marks on the face of the blade.</p>
+        <div class="price">$600</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="7" data-imgs='["images/7a.jpeg", "images/7b.jpeg"]' data-search="mick strider cr axe " data-price="1050">
+      <div class="card-img">
+        <img src="images/7a.jpeg" alt="Mick Strider — CR Axe" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 07</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — CR Axe</h2>
+        
+        <div class="price">$1,050</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="8" data-imgs='["images/8a.jpeg", "images/8b.jpeg"]' data-search="mick strider ar 15th anniversary edition uncarried, #59" data-price="1150">
+      <div class="card-img">
+        <img src="images/8a.jpeg" alt="Mick Strider — AR 15th Anniversary Edition" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 08</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — AR 15th Anniversary Edition</h2>
+        <p class="desc">Uncarried, #59</p>
+        <div class="price">$1,150</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="9" data-imgs='["images/9a.jpeg", "images/9b.jpeg"]' data-search="benchmade auto stryker black aluminum — sku 9101sbk" data-price="200">
+      <div class="card-img">
+        <img src="images/9a.jpeg" alt="Benchmade — Auto Stryker" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 09</span>
+      </div>
+      <div class="card-body">
+        <h2>Benchmade — Auto Stryker</h2>
+        <p class="desc">Black Aluminum — SKU 9101SBK</p>
+        <div class="price">$200</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="11" data-imgs='["images/11a.jpeg"]' data-search="chris reeve green beret 7" fixed blade with sheath. box and birth certificate included." data-price="325">
+      <div class="card-img">
+        <img src="images/11a.jpeg" alt="Chris Reeve — Green Beret 7" Fixed Blade" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 11</span>
+      </div>
+      <div class="card-body">
+        <h2>Chris Reeve — Green Beret 7" Fixed Blade</h2>
+        <p class="desc">With sheath. Box and birth certificate included.</p>
+        <div class="price">$325</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="14" data-imgs='["images/14a.jpeg", "images/14b.jpeg"]' data-search="jeff hall custom folder likely late 1990s–early 2000s" data-price="350">
+      <div class="card-img">
+        <img src="images/14a.jpeg" alt="Jeff Hall — Custom Folder" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 14</span>
+      </div>
+      <div class="card-body">
+        <h2>Jeff Hall — Custom Folder</h2>
+        <p class="desc">Likely late 1990s–early 2000s</p>
+        <div class="price">$350</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="15" data-imgs='["images/15a.jpeg", "images/15b.jpeg"]' data-search="william henry b7-ftb dlc coated with blue clip" data-price="325">
+      <div class="card-img">
+        <img src="images/15a.jpeg" alt="William Henry — B7-FTB" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 15</span>
+      </div>
+      <div class="card-body">
+        <h2>William Henry — B7-FTB</h2>
+        <p class="desc">DLC Coated with Blue Clip</p>
+        <div class="price">$325</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="16" data-imgs='["images/highres/16/IMG_2436.jpeg", "images/highres/16/IMG_2437.jpeg", "images/highres/16/IMG_2438.jpeg", "images/highres/16/IMG_2439.jpeg", "images/highres/16/IMG_2440.jpeg", "images/highres/16/IMG_2441.jpeg", "images/highres/16/IMG_2442.jpeg", "images/highres/16/IMG_2443.jpeg", "images/highres/16/IMG_2444.jpeg", "images/highres/16/IMG_2445.jpeg", "images/highres/16/IMG_2446.jpeg", "images/highres/16/IMG_2447.jpeg", "images/highres/16/IMG_2448.jpeg"]' data-search="chris reeve small sebenza classic (ug) hematite inlay, lisa's pick june 2006, with box and certificate" data-price="600">
+      <div class="card-img">
+        <img src="images/16a.jpeg" alt="Chris Reeve — Small Sebenza Classic (UG)" loading="eager" decoding="sync">
+        <span class="gallery-badge">&#8599; Gallery</span>
+        <span class="id-badge">No. 16</span>
+      </div>
+      <div class="card-body">
+        <h2>Chris Reeve — Small Sebenza Classic (UG)</h2>
+        <p class="desc">Hematite inlay, Lisa's Pick June 2006, with box and certificate</p>
+        <div class="price">$600</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="19" data-imgs='["images/19a.jpeg", "images/19b.jpeg"]' data-search="chris reeve aviator excellent aviator with leather sheath. box and birth certificate included." data-price="900">
+      <div class="card-img">
+        <img src="images/19a.jpeg" alt="Chris Reeve — Aviator" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 19</span>
+      </div>
+      <div class="card-body">
+        <h2>Chris Reeve — Aviator</h2>
+        <p class="desc">Excellent Aviator with leather sheath. Box and birth certificate included.</p>
+        <div class="price">$900</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="20" data-imgs='["images/20a.jpeg", "images/20b.jpeg"]' data-search="chris reeve shadow iii with leather sheath. box and birth certificate included." data-price="825">
+      <div class="card-img">
+        <img src="images/20a.jpeg" alt="Chris Reeve — Shadow III" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 20</span>
+      </div>
+      <div class="card-body">
+        <h2>Chris Reeve — Shadow III</h2>
+        <p class="desc">With leather sheath. Box and birth certificate included.</p>
+        <div class="price">$825</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="21" data-imgs='["images/21a.jpeg", "images/21b.jpeg"]' data-search="mick strider js custom nightmare grind and clip blade, includes csm sheath" data-price="1450">
+      <div class="card-img">
+        <img src="images/21a.jpeg" alt="Mick Strider — JS Custom" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 21</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — JS Custom</h2>
+        <p class="desc">Nightmare Grind and Clip blade, includes CSM sheath</p>
+        <div class="price">$1,450</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="22" data-imgs='["images/22a.jpeg", "images/22b.jpeg"]' data-search="mick strider eb-ac airwing " data-price="925">
+      <div class="card-img">
+        <img src="images/22a.jpeg" alt="Mick Strider — EB-AC Airwing" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 22</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — EB-AC Airwing</h2>
+        
+        <div class="price">$925</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="23" data-imgs='["images/highres/23/IMG_2217.jpeg", "images/highres/23/IMG_2218.jpeg", "images/highres/23/IMG_2219.jpeg", "images/highres/23/IMG_2220.jpeg", "images/highres/23/IMG_2221.jpeg", "images/highres/23/IMG_2222.jpeg"]' data-search="mick strider pt black; minor signs of wear" data-price="275">
+      <div class="card-img">
+        <img src="images/23a.jpeg" alt="Mick Strider — PT" loading="eager" decoding="sync">
+        <span class="gallery-badge">&#8599; Gallery</span>
+        <span class="id-badge">No. 23</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — PT</h2>
+        <p class="desc">Black; minor signs of wear</p>
+        <div class="price">$275</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="24" data-imgs='["images/24a.jpeg", "images/24b.jpeg"]' data-search="mick strider ed skeleton with sheath" data-price="350">
+      <div class="card-img">
+        <img src="images/24a.jpeg" alt="Mick Strider — ED Skeleton" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 24</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — ED Skeleton</h2>
+        <p class="desc">With sheath</p>
+        <div class="price">$350</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="25" data-imgs='["images/25a.jpeg", "images/25b.jpeg"]' data-search="mick strider rc tad #028" data-price="1400">
+      <div class="card-img">
+        <img src="images/25a.jpeg" alt="Mick Strider — RC" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 25</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — RC</h2>
+        <p class="desc">TAD #028</p>
+        <div class="price">$1,400</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="26" data-imgs='["images/26a.jpeg", "images/26b.jpeg"]' data-search="mick strider ar custom aftermarket polished clip." data-price="1250">
+      <div class="card-img">
+        <img src="images/26a.jpeg" alt="Mick Strider — AR" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 26</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — AR</h2>
+        <p class="desc">Custom aftermarket polished clip.</p>
+        <div class="price">$1,250</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="27" data-imgs='["images/highres/27/IMG_2474.jpeg", "images/highres/27/IMG_2475.jpeg", "images/highres/27/IMG_2476.jpeg", "images/highres/27/IMG_2477.jpeg", "images/highres/27/IMG_2478.jpeg", "images/highres/27/IMG_2479.jpeg", "images/highres/27/IMG_2480.jpeg", "images/highres/27/IMG_2481.jpeg", "images/highres/27/IMG_2482.jpeg", "images/highres/27/IMG_2483.jpeg"]' data-search="mick strider rcc black" data-price="750">
+      <div class="card-img">
+        <img src="images/27a.jpeg" alt="Mick Strider — RCC" loading="eager" decoding="sync">
+        <span class="gallery-badge">&#8599; Gallery</span>
+        <span class="id-badge">No. 27</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — RCC</h2>
+        <p class="desc">Black</p>
+        <div class="price">$750</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="28" data-imgs='["images/28a.jpeg", "images/28b.jpeg"]' data-search="mick strider rcc with gunner grips" data-price="950">
+      <div class="card-img">
+        <img src="images/28a.jpeg" alt="Mick Strider — RCC" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 28</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — RCC</h2>
+        <p class="desc">With Gunner Grips</p>
+        <div class="price">$950</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="29" data-imgs='["images/29a.jpeg", "images/29b.jpeg"]' data-search="duane dwyer rcc tanto and barbed wire blade" data-price="1000">
+      <div class="card-img">
+        <img src="images/29a.jpeg" alt="Duane Dwyer — RCC" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 29</span>
+      </div>
+      <div class="card-body">
+        <h2>Duane Dwyer — RCC</h2>
+        <p class="desc">Tanto and Barbed Wire blade</p>
+        <div class="price">$1,000</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="32" data-imgs='["images/highres/32/IMG_2464.jpeg", "images/highres/32/IMG_2465.jpeg", "images/highres/32/IMG_2466.jpeg", "images/highres/32/IMG_2467.jpeg", "images/highres/32/IMG_2468.jpeg", "images/highres/32/IMG_2469.jpeg", "images/highres/32/IMG_2470.jpeg", "images/highres/32/IMG_2471.jpeg", "images/highres/32/IMG_2472.jpeg"]' data-search="mick strider smf marlowe swedge" data-price="1100">
+      <div class="card-img">
+        <img src="images/32a.jpeg" alt="Mick Strider — SMF" loading="eager" decoding="sync">
+        <span class="gallery-badge">&#8599; Gallery</span>
+        <span class="id-badge">No. 32</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — SMF</h2>
+        <p class="desc">Marlowe Swedge</p>
+        <div class="price">$1,100</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="33" data-imgs='["images/33a.jpeg", "images/33b.jpeg"]' data-search="mick strider gb tanto cut, digicamo blade with colored scales" data-price="1600">
+      <div class="card-img">
+        <img src="images/33a.jpeg" alt="Mick Strider — GB" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 33</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — GB</h2>
+        <p class="desc">Tanto cut, Digicamo blade with colored scales</p>
+        <div class="price">$1,600</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="34" data-imgs='["images/34a.jpeg", "images/34b.jpeg"]' data-search="duane dwyer sng cc razor wire pattern" data-price="1800">
+      <div class="card-img">
+        <img src="images/34a.jpeg" alt="Duane Dwyer — SnG CC" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 34</span>
+      </div>
+      <div class="card-body">
+        <h2>Duane Dwyer — SnG CC</h2>
+        <p class="desc">Razor Wire Pattern</p>
+        <div class="price">$1,800</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="35" data-imgs='["images/35a.jpeg", "images/35b.jpeg"]' data-search="mick strider smf dgg tiger stripe" data-price="1500">
+      <div class="card-img">
+        <img src="images/35a.jpeg" alt="Mick Strider — SMF DGG" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 35</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — SMF DGG</h2>
+        <p class="desc">Tiger Stripe</p>
+        <div class="price">$1,500</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="37" data-imgs='["images/highres/37/IMG_2223.jpeg", "images/highres/37/IMG_2224.jpeg", "images/highres/37/IMG_2225.jpeg", "images/highres/37/IMG_2226.jpeg", "images/highres/37/IMG_2227.jpeg", "images/highres/37/IMG_2228.jpeg", "images/highres/37/IMG_2229.jpeg", "images/highres/37/IMG_2230.jpeg", "images/highres/37/IMG_2231.jpeg", "images/highres/37/IMG_2232.jpeg"]' data-search="duane dwyer smf razor finish with american flag" data-price="1200">
+      <div class="card-img">
+        <img src="images/37a.jpeg" alt="Duane Dwyer — SMF" loading="eager" decoding="sync">
+        <span class="gallery-badge">&#8599; Gallery</span>
+        <span class="id-badge">No. 37</span>
+      </div>
+      <div class="card-body">
+        <h2>Duane Dwyer — SMF</h2>
+        <p class="desc">Razor finish with American Flag</p>
+        <div class="price">$1,200</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="40" data-imgs='["images/40a.jpeg", "images/40b.jpeg"]' data-search="mick strider fighter prototype design, signed by strider" data-price="1200">
+      <div class="card-img">
+        <img src="images/40a.jpeg" alt="Mick Strider — Fighter" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 40</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — Fighter</h2>
+        <p class="desc">Prototype design, signed by Strider</p>
+        <div class="price">$1,200</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="41" data-imgs='["images/41a.jpeg", "images/41b.jpeg"]' data-search="mick strider steel nail with kydex sheath" data-price="100">
+      <div class="card-img">
+        <img src="images/41a.jpeg" alt="Mick Strider — Steel Nail" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 41</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — Steel Nail</h2>
+        <p class="desc">With Kydex sheath</p>
+        <div class="price">$100</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="42" data-imgs='["images/42a.jpeg", "images/42b.jpeg"]' data-search="mick strider steel nail with kydex sheath" data-price="100">
+      <div class="card-img">
+        <img src="images/42a.jpeg" alt="Mick Strider — Steel Nail" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 42</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — Steel Nail</h2>
+        <p class="desc">With Kydex sheath</p>
+        <div class="price">$100</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="43" data-imgs='["images/43a.jpeg", "images/43b.jpeg"]' data-search="mick strider fixed blade one-off from plaza cutlery" data-price="900">
+      <div class="card-img">
+        <img src="images/43a.jpeg" alt="Mick Strider — Fixed Blade" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 43</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — Fixed Blade</h2>
+        <p class="desc">One-off from Plaza Cutlery</p>
+        <div class="price">$900</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="44" data-imgs='["images/44a.jpeg", "images/44b.jpeg"]' data-search="mick strider custom fixed blade damascus, 14" blade" data-price="4125">
+      <div class="card-img">
+        <img src="images/44a.jpeg" alt="Mick Strider — Custom Fixed Blade" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 44</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — Custom Fixed Blade</h2>
+        <p class="desc">Damascus, 14" blade</p>
+        <div class="price">$4,125</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="45" data-imgs='["images/45a.jpeg", "images/45b.jpeg"]' data-search="mick strider custom hand forged fighter 1 of 3 made in 2007" data-price="8500">
+      <div class="card-img">
+        <img src="images/45a.jpeg" alt="Mick Strider — Custom Hand Forged Fighter" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 45</span>
+      </div>
+      <div class="card-body">
+        <h2>Mick Strider — Custom Hand Forged Fighter</h2>
+        <p class="desc">1 of 3 made in 2007</p>
+        <div class="price">$8,500</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="46" data-imgs='["images/46a.jpeg", "images/46b.jpeg"]' data-search="chris reeve project i no box or papers." data-price="900">
+      <div class="card-img">
+        <img src="images/46a.jpeg" alt="Chris Reeve — Project I" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 46</span>
+      </div>
+      <div class="card-body">
+        <h2>Chris Reeve — Project I</h2>
+        <p class="desc">No box or papers.</p>
+        <div class="price">$900</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="47" data-imgs='["images/47a.jpeg", "images/47b.jpeg"]' data-search="chris reeve inyoni cocobolo box and birth certificate included." data-price="320">
+      <div class="card-img">
+        <img src="images/47a.jpeg" alt="Chris Reeve — Inyoni Cocobolo" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 47</span>
+      </div>
+      <div class="card-body">
+        <h2>Chris Reeve — Inyoni Cocobolo</h2>
+        <p class="desc">Box and birth certificate included.</p>
+        <div class="price">$320</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="48" data-imgs='["images/highres/48/IMG_2450.jpeg", "images/highres/48/IMG_2451.jpeg", "images/highres/48/IMG_2452.jpeg", "images/highres/48/IMG_2453.jpeg", "images/highres/48/IMG_2454.jpeg", "images/highres/48/IMG_2455.jpeg", "images/highres/48/IMG_2456.jpeg", "images/highres/48/IMG_2457.jpeg", "images/highres/48/IMG_2458.jpeg", "images/highres/48/IMG_2459.jpeg", "images/highres/48/IMG_2460.jpeg", "images/highres/48/IMG_2462.jpeg", "images/highres/48/IMG_2463.jpeg"]' data-search="chris reeve large sebenza unique graphic lisa pick, may 2005. box and birth certificate included." data-price="1100">
+      <div class="card-img">
+        <img src="images/48a.jpeg" alt="Chris Reeve — Large Sebenza Unique Graphic" loading="eager" decoding="sync">
+        <span class="gallery-badge">&#8599; Gallery</span>
+        <span class="id-badge">No. 48</span>
+      </div>
+      <div class="card-body">
+        <h2>Chris Reeve — Large Sebenza Unique Graphic</h2>
+        <p class="desc">Lisa Pick, May 2005. Box and birth certificate included.</p>
+        <div class="price">$1,100</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="49" data-imgs='["images/highres/49/IMG_2424.jpeg", "images/highres/49/IMG_2425.jpeg", "images/highres/49/IMG_2426.jpeg", "images/highres/49/IMG_2427.jpeg", "images/highres/49/IMG_2428.jpeg", "images/highres/49/IMG_2429.jpeg", "images/highres/49/IMG_2430.jpeg", "images/highres/49/IMG_2431.jpeg", "images/highres/49/IMG_2432.jpeg", "images/highres/49/IMG_2433.jpeg", "images/highres/49/IMG_2434.jpeg", "images/highres/49/IMG_2435.jpeg"]' data-search="chris reeve small sebenza unique graphic carnelian inlay, august 2005. box and birth certificate included. missing clip." data-price="950">
+      <div class="card-img">
+        <img src="images/49a.jpeg" alt="Chris Reeve — Small Sebenza Unique Graphic" loading="eager" decoding="sync">
+        <span class="gallery-badge">&#8599; Gallery</span>
+        <span class="id-badge">No. 49</span>
+      </div>
+      <div class="card-body">
+        <h2>Chris Reeve — Small Sebenza Unique Graphic</h2>
+        <p class="desc">Carnelian Inlay, August 2005. Box and birth certificate included. Missing clip.</p>
+        <div class="price">$950</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="50" data-imgs='["images/50a.jpeg", "images/50b.jpeg"]' data-search="william henry m20-ab icon interframe includes original box and sheath." data-price="500">
+      <div class="card-img">
+        <img src="images/50a.jpeg" alt="William Henry — M20-AB Icon Interframe" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 50</span>
+      </div>
+      <div class="card-body">
+        <h2>William Henry — M20-AB Icon Interframe</h2>
+        <p class="desc">Includes original box and sheath.</p>
+        <div class="price">$500</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="51" data-imgs='["images/51a.jpeg", "images/51b.jpeg"]' data-search="william henry b07-aerospace #92 of 100. includes original box and sheath." data-price="550">
+      <div class="card-img">
+        <img src="images/51a.jpeg" alt="William Henry — B07-Aerospace" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 51</span>
+      </div>
+      <div class="card-body">
+        <h2>William Henry — B07-Aerospace</h2>
+        <p class="desc">#92 of 100. Includes original box and sheath.</p>
+        <div class="price">$550</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="52" data-imgs='["images/52a.jpeg", "images/52b.jpeg"]' data-search="william henry b07-ftd signature box included." data-price="495">
+      <div class="card-img">
+        <img src="images/52a.jpeg" alt="William Henry — B07-FTD Signature" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 52</span>
+      </div>
+      <div class="card-body">
+        <h2>William Henry — B07-FTD Signature</h2>
+        <p class="desc">Box included.</p>
+        <div class="price">$495</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="53" data-imgs='["images/53a.jpeg", "images/53b.jpeg"]' data-search="graham knives wharncliffe necker includes sheath." data-price="275">
+      <div class="card-img">
+        <img src="images/53a.jpeg" alt="Graham Knives — Wharncliffe Necker" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 53</span>
+      </div>
+      <div class="card-body">
+        <h2>Graham Knives — Wharncliffe Necker</h2>
+        <p class="desc">Includes sheath.</p>
+        <div class="price">$275</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="54" data-imgs='["images/54a.jpeg", "images/54b.jpeg"]' data-search="graham knives razelcliffe necker includes sheath." data-price="275">
+      <div class="card-img">
+        <img src="images/54a.jpeg" alt="Graham Knives — Razelcliffe Necker" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 54</span>
+      </div>
+      <div class="card-body">
+        <h2>Graham Knives — Razelcliffe Necker</h2>
+        <p class="desc">Includes sheath.</p>
+        <div class="price">$275</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="55" data-imgs='["images/55a.jpeg", "images/55b.jpeg"]' data-search="graham knives hut 1 mosaic pins over red liners. includes sheath." data-price="450">
+      <div class="card-img">
+        <img src="images/55a.jpeg" alt="Graham Knives — Hut 1" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 55</span>
+      </div>
+      <div class="card-body">
+        <h2>Graham Knives — Hut 1</h2>
+        <p class="desc">Mosaic pins over red liners. Includes sheath.</p>
+        <div class="price">$450</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="56" data-imgs='["images/56a.jpeg", "images/56b.jpeg"]' data-search="graham knives pocket kukri blue jean twill handle. includes sheath." data-price="450">
+      <div class="card-img">
+        <img src="images/56a.jpeg" alt="Graham Knives — Pocket Kukri" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 56</span>
+      </div>
+      <div class="card-body">
+        <h2>Graham Knives — Pocket Kukri</h2>
+        <p class="desc">Blue Jean Twill handle. Includes sheath.</p>
+        <div class="price">$450</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="57" data-imgs='["images/57a.jpeg", "images/57b.jpeg"]' data-search="graham knives karambit damasteel blade, burl wood handle. includes sheath." data-price="700">
+      <div class="card-img">
+        <img src="images/57a.jpeg" alt="Graham Knives — Karambit" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 57</span>
+      </div>
+      <div class="card-body">
+        <h2>Graham Knives — Karambit</h2>
+        <p class="desc">Damasteel blade, burl wood handle. Includes sheath.</p>
+        <div class="price">$700</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="58" data-imgs='["images/58a.jpeg", "images/58b.jpeg"]' data-search="graham knives wharncliffe desert ironwood includes sheath." data-price="650">
+      <div class="card-img">
+        <img src="images/58a.jpeg" alt="Graham Knives — Wharncliffe Desert Ironwood" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 58</span>
+      </div>
+      <div class="card-body">
+        <h2>Graham Knives — Wharncliffe Desert Ironwood</h2>
+        <p class="desc">Includes sheath.</p>
+        <div class="price">$650</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="59" data-imgs='["images/59a.jpeg", "images/59b.jpeg"]' data-search="graham knives ringed razel ss le razel owners group #3. includes sheath." data-price="600">
+      <div class="card-img">
+        <img src="images/59a.jpeg" alt="Graham Knives — Ringed Razel SS LE" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 59</span>
+      </div>
+      <div class="card-body">
+        <h2>Graham Knives — Ringed Razel SS LE</h2>
+        <p class="desc">Razel Owners Group #3. Includes sheath.</p>
+        <div class="price">$600</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="60" data-imgs='["images/60a.jpeg", "images/60b.jpeg"]' data-search="graham knives razel damascus blade, mammoth ivory handle." data-price="1000">
+      <div class="card-img">
+        <img src="images/60a.jpeg" alt="Graham Knives — Razel" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 60</span>
+      </div>
+      <div class="card-body">
+        <h2>Graham Knives — Razel</h2>
+        <p class="desc">Damascus blade, Mammoth Ivory handle.</p>
+        <div class="price">$1,000</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="61" data-imgs='["images/61a.jpeg", "images/61b.jpeg"]' data-search="graham knives wharncliffe grey cf necker includes sheath." data-price="500">
+      <div class="card-img">
+        <img src="images/61a.jpeg" alt="Graham Knives — Wharncliffe Grey CF Necker" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 61</span>
+      </div>
+      <div class="card-body">
+        <h2>Graham Knives — Wharncliffe Grey CF Necker</h2>
+        <p class="desc">Includes sheath.</p>
+        <div class="price">$500</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="62" data-imgs='["images/62a.jpeg", "images/62b.jpeg"]' data-search="graham knives razel wood finish handle. includes sheath." data-price="500">
+      <div class="card-img">
+        <img src="images/62a.jpeg" alt="Graham Knives — Razel" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 62</span>
+      </div>
+      <div class="card-body">
+        <h2>Graham Knives — Razel</h2>
+        <p class="desc">Wood finish handle. Includes sheath.</p>
+        <div class="price">$500</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="63" data-imgs='["images/63a.jpeg", "images/63b.jpeg"]' data-search="graham knives wharncliffe fixed includes sheath." data-price="300">
+      <div class="card-img">
+        <img src="images/63a.jpeg" alt="Graham Knives — Wharncliffe Fixed" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 63</span>
+      </div>
+      <div class="card-body">
+        <h2>Graham Knives — Wharncliffe Fixed</h2>
+        <p class="desc">Includes sheath.</p>
+        <div class="price">$300</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="64" data-imgs='["images/64a.jpeg", "images/64b.jpeg"]' data-search="buck impulse used." data-price="20">
+      <div class="card-img">
+        <img src="images/64a.jpeg" alt="Buck — Impulse" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 64</span>
+      </div>
+      <div class="card-body">
+        <h2>Buck — Impulse</h2>
+        <p class="desc">Used.</p>
+        <div class="price">$20</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="65" data-imgs='["images/65a.jpeg", "images/65b.jpeg"]' data-search="buck model 192 vanguard includes leather sheath." data-price="75">
+      <div class="card-img">
+        <img src="images/65a.jpeg" alt="Buck — Model 192 Vanguard" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 65</span>
+      </div>
+      <div class="card-body">
+        <h2>Buck — Model 192 Vanguard</h2>
+        <p class="desc">Includes leather sheath.</p>
+        <div class="price">$75</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="66" data-imgs='["images/66a.jpeg", "images/66b.jpeg"]' data-search="buck model 532 stratton customization/filework. includes leather case." data-price="250">
+      <div class="card-img">
+        <img src="images/66a.jpeg" alt="Buck — Model 532" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 66</span>
+      </div>
+      <div class="card-body">
+        <h2>Buck — Model 532</h2>
+        <p class="desc">Stratton customization/filework. Includes leather case.</p>
+        <div class="price">$250</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="67" data-imgs='["images/67a.jpeg", "images/67b.jpeg"]' data-search="shane sibert minion includes kydex sheath." data-price="495">
+      <div class="card-img">
+        <img src="images/67a.jpeg" alt="Shane Sibert — Minion" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 67</span>
+      </div>
+      <div class="card-body">
+        <h2>Shane Sibert — Minion</h2>
+        <p class="desc">Includes kydex sheath.</p>
+        <div class="price">$495</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="68" data-imgs='["images/68a.jpeg", "images/68b.jpeg"]' data-search="shane sibert darius includes kydex sheath." data-price="495">
+      <div class="card-img">
+        <img src="images/68a.jpeg" alt="Shane Sibert — Darius" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 68</span>
+      </div>
+      <div class="card-body">
+        <h2>Shane Sibert — Darius</h2>
+        <p class="desc">Includes kydex sheath.</p>
+        <div class="price">$495</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="69" data-imgs='["images/69a.jpeg", "images/69b.jpeg"]' data-search="les voorhies linerlock flipper " data-price="500">
+      <div class="card-img">
+        <img src="images/69a.jpeg" alt="Les Voorhies — Linerlock Flipper" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 69</span>
+      </div>
+      <div class="card-body">
+        <h2>Les Voorhies — Linerlock Flipper</h2>
+        
+        <div class="price">$500</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="70" data-imgs='["images/70a.jpeg", "images/70b.jpeg"]' data-search="pml knives paul letoruneau recurve fighter " data-price="300">
+      <div class="card-img">
+        <img src="images/70a.jpeg" alt="PML Knives — Paul LeToruneau Recurve Fighter" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 70</span>
+      </div>
+      <div class="card-body">
+        <h2>PML Knives — Paul LeToruneau Recurve Fighter</h2>
+        
+        <div class="price">$300</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="71" data-imgs='["images/71a.jpeg", "images/71b.jpeg"]' data-search="walter brend model 2-7 brend made rescue series includes camo sheath." data-price="1800">
+      <div class="card-img">
+        <img src="images/71a.jpeg" alt="Walter Brend — Model 2-7 Brend Made Rescue Series" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 71</span>
+      </div>
+      <div class="card-body">
+        <h2>Walter Brend — Model 2-7 Brend Made Rescue Series</h2>
+        <p class="desc">Includes camo sheath.</p>
+        <div class="price">$1,800</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="72" data-imgs='["images/72a.jpeg", "images/72b.jpeg"]' data-search="o'hare knives splinter s model skeleton style includes 2-piece kydex sheath." data-price="180">
+      <div class="card-img">
+        <img src="images/72a.jpeg" alt="O'Hare Knives — Splinter S Model Skeleton Style" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 72</span>
+      </div>
+      <div class="card-body">
+        <h2>O'Hare Knives — Splinter S Model Skeleton Style</h2>
+        <p class="desc">Includes 2-piece kydex sheath.</p>
+        <div class="price">$180</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="73" data-imgs='["images/73a.jpeg", "images/73b.jpeg"]' data-search="walter brend boot knife includes kydex sheath." data-price="600">
+      <div class="card-img">
+        <img src="images/73a.jpeg" alt="Walter Brend — Boot Knife" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 73</span>
+      </div>
+      <div class="card-body">
+        <h2>Walter Brend — Boot Knife</h2>
+        <p class="desc">Includes kydex sheath.</p>
+        <div class="price">$600</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="74" data-imgs='["images/74a.jpeg", "images/74b.jpeg"]' data-search="kershaw knives model 1660 leek original " data-price="50">
+      <div class="card-img">
+        <img src="images/74a.jpeg" alt="Kershaw Knives — Model 1660 Leek Original" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 74</span>
+      </div>
+      <div class="card-body">
+        <h2>Kershaw Knives — Model 1660 Leek Original</h2>
+        
+        <div class="price">$50</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="75" data-imgs='["images/75a.jpeg", "images/75b.jpeg"]' data-search="kershaw knives model 1596 ken onion spec bump " data-price="200">
+      <div class="card-img">
+        <img src="images/75a.jpeg" alt="Kershaw Knives — Model 1596 Ken Onion Spec Bump" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 75</span>
+      </div>
+      <div class="card-body">
+        <h2>Kershaw Knives — Model 1596 Ken Onion Spec Bump</h2>
+        
+        <div class="price">$200</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="76" data-imgs='["images/76a.jpeg", "images/76b.jpeg"]' data-search="eric elson huge fighter a few small rust spots. includes kydex sheath." data-price="200">
+      <div class="card-img">
+        <img src="images/76a.jpeg" alt="Eric Elson — Huge Fighter" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 76</span>
+      </div>
+      <div class="card-body">
+        <h2>Eric Elson — Huge Fighter</h2>
+        <p class="desc">A few small rust spots. Includes kydex sheath.</p>
+        <div class="price">$200</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="77" data-imgs='["images/77a.jpeg", "images/77b.jpeg"]' data-search="kim breed skeleton necker " data-price="50">
+      <div class="card-img">
+        <img src="images/77a.jpeg" alt="Kim Breed — Skeleton Necker" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 77</span>
+      </div>
+      <div class="card-body">
+        <h2>Kim Breed — Skeleton Necker</h2>
+        
+        <div class="price">$50</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="78" data-imgs='["images/78a.jpeg", "images/78b.jpeg"]' data-search="begg knives kiridashi neck knife #005 includes kydex sheath." data-price="175">
+      <div class="card-img">
+        <img src="images/78a.jpeg" alt="Begg Knives — Kiridashi Neck Knife #005" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 78</span>
+      </div>
+      <div class="card-body">
+        <h2>Begg Knives — Kiridashi Neck Knife #005</h2>
+        <p class="desc">Includes kydex sheath.</p>
+        <div class="price">$175</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="79" data-imgs='["images/79a.jpeg", "images/79b.jpeg"]' data-search="gaylean knives pro series large junk yard dog (jyd) #59 " data-price="400">
+      <div class="card-img">
+        <img src="images/79a.jpeg" alt="Gaylean Knives — Pro Series Large Junk Yard Dog (JYD) #59" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 79</span>
+      </div>
+      <div class="card-body">
+        <h2>Gaylean Knives — Pro Series Large Junk Yard Dog (JYD) #59</h2>
+        
+        <div class="price">$400</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="80" data-imgs='["images/80a.jpeg", "images/80b.jpeg"]' data-search="gaylean knives pro series small junk yard dog (jyd) #59 " data-price="300">
+      <div class="card-img">
+        <img src="images/80a.jpeg" alt="Gaylean Knives — Pro Series Small Junk Yard Dog (JYD) #59" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 80</span>
+      </div>
+      <div class="card-body">
+        <h2>Gaylean Knives — Pro Series Small Junk Yard Dog (JYD) #59</h2>
+        
+        <div class="price">$300</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="81" data-imgs='["images/81a.jpeg", "images/81b.jpeg"]' data-search="j.a. henckels 2 blade pick bone folder " data-price="30">
+      <div class="card-img">
+        <img src="images/81a.jpeg" alt="J.A. Henckels — 2 Blade Pick Bone Folder" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 81</span>
+      </div>
+      <div class="card-body">
+        <h2>J.A. Henckels — 2 Blade Pick Bone Folder</h2>
+        
+        <div class="price">$30</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="82" data-imgs='["images/82a.jpeg", "images/82b.jpeg"]' data-search="randall made model 3-6 burled maple handle. includes leather sheath." data-price="850">
+      <div class="card-img">
+        <img src="images/82a.jpeg" alt="Randall Made — Model 3-6" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 82</span>
+      </div>
+      <div class="card-body">
+        <h2>Randall Made — Model 3-6</h2>
+        <p class="desc">Burled maple handle. Includes leather sheath.</p>
+        <div class="price">$850</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="83" data-imgs='["images/83a.jpeg", "images/83b.jpeg"]' data-search="tanya begg titanium thumb dagger #19 " data-price="150">
+      <div class="card-img">
+        <img src="images/83a.jpeg" alt="Tanya Begg — Titanium Thumb Dagger #19" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 83</span>
+      </div>
+      <div class="card-body">
+        <h2>Tanya Begg — Titanium Thumb Dagger #19</h2>
+        
+        <div class="price">$150</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="84" data-imgs='["images/84a.jpeg", "images/84b.jpeg"]' data-search="randall made vintage model 2-8 dagger red, white and blue spacers with aluminum buttcap. includes leather sheath." data-price="1500">
+      <div class="card-img">
+        <img src="images/84a.jpeg" alt="Randall Made — Vintage Model 2-8 Dagger" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 84</span>
+      </div>
+      <div class="card-body">
+        <h2>Randall Made — Vintage Model 2-8 Dagger</h2>
+        <p class="desc">Red, white and blue spacers with aluminum buttcap. Includes leather sheath.</p>
+        <div class="price">$1,500</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="85" data-imgs='["images/85a.jpeg", "images/85b.jpeg"]' data-search="randall made model 25-5 includes leather sheath." data-price="850">
+      <div class="card-img">
+        <img src="images/85a.jpeg" alt="Randall Made — Model 25-5" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 85</span>
+      </div>
+      <div class="card-body">
+        <h2>Randall Made — Model 25-5</h2>
+        <p class="desc">Includes leather sheath.</p>
+        <div class="price">$850</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="86" data-imgs='["images/86a.jpeg", "images/86b.jpeg"]' data-search="parker-edwards damascus lockback needs cleaning." data-price="100">
+      <div class="card-img">
+        <img src="images/86a.jpeg" alt="Parker-Edwards — Damascus Lockback" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 86</span>
+      </div>
+      <div class="card-body">
+        <h2>Parker-Edwards — Damascus Lockback</h2>
+        <p class="desc">Needs cleaning.</p>
+        <div class="price">$100</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="87" data-imgs='["images/87a.jpeg", "images/87b.jpeg"]' data-search="w.d. pease damascus lockback with black lip pearl " data-price="850">
+      <div class="card-img">
+        <img src="images/87a.jpeg" alt="W.D. Pease — Damascus Lockback with Black Lip Pearl" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 87</span>
+      </div>
+      <div class="card-body">
+        <h2>W.D. Pease — Damascus Lockback with Black Lip Pearl</h2>
+        
+        <div class="price">$850</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="88" data-imgs='["images/88a.jpeg", "images/88b.jpeg"]' data-search="pml knives dagger " data-price="50">
+      <div class="card-img">
+        <img src="images/88a.jpeg" alt="PML Knives — Dagger" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 88</span>
+      </div>
+      <div class="card-body">
+        <h2>PML Knives — Dagger</h2>
+        
+        <div class="price">$50</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="89" data-imgs='["images/89a.jpeg", "images/89b.jpeg"]' data-search="mcginnis small stag hunter includes leather sheath." data-price="100">
+      <div class="card-img">
+        <img src="images/89a.jpeg" alt="McGinnis — Small Stag Hunter" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 89</span>
+      </div>
+      <div class="card-body">
+        <h2>McGinnis — Small Stag Hunter</h2>
+        <p class="desc">Includes leather sheath.</p>
+        <div class="price">$100</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="90" data-imgs='["images/90a.jpeg", "images/90b.jpeg"]' data-search="al alexander wharncliffe red handle." data-price="130">
+      <div class="card-img">
+        <img src="images/90a.jpeg" alt="Al Alexander — Wharncliffe" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 90</span>
+      </div>
+      <div class="card-body">
+        <h2>Al Alexander — Wharncliffe</h2>
+        <p class="desc">Red handle.</p>
+        <div class="price">$130</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="91" data-imgs='["images/91a.jpeg", "images/91b.jpeg"]' data-search="chuck richards (acr) large damascus hunter " data-price="750">
+      <div class="card-img">
+        <img src="images/91a.jpeg" alt="Chuck Richards (ACR) — Large Damascus Hunter" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 91</span>
+      </div>
+      <div class="card-body">
+        <h2>Chuck Richards (ACR) — Large Damascus Hunter</h2>
+        
+        <div class="price">$750</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="92" data-imgs='["images/92a.jpeg", "images/92b.jpeg"]' data-search="t.a. davison damascus hunter an early model of t.a. davison." data-price="290">
+      <div class="card-img">
+        <img src="images/92a.jpeg" alt="T.A. Davison — Damascus Hunter" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 92</span>
+      </div>
+      <div class="card-body">
+        <h2>T.A. Davison — Damascus Hunter</h2>
+        <p class="desc">An early model of T.A. Davison.</p>
+        <div class="price">$290</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="93" data-imgs='["images/93a.jpeg", "images/93b.jpeg"]' data-search="fred ott ironwood damascus hunter includes leather sheath." data-price="575">
+      <div class="card-img">
+        <img src="images/93a.jpeg" alt="Fred Ott — Ironwood Damascus Hunter" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 93</span>
+      </div>
+      <div class="card-body">
+        <h2>Fred Ott — Ironwood Damascus Hunter</h2>
+        <p class="desc">Includes leather sheath.</p>
+        <div class="price">$575</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="94" data-imgs='["images/94a.jpeg", "images/94b.jpeg"]' data-search="jerry hossom hunter/killer includes leather sheath." data-price="1100">
+      <div class="card-img">
+        <img src="images/94a.jpeg" alt="Jerry Hossom — Hunter/Killer" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 94</span>
+      </div>
+      <div class="card-body">
+        <h2>Jerry Hossom — Hunter/Killer</h2>
+        <p class="desc">Includes leather sheath.</p>
+        <div class="price">$1,100</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="95" data-imgs='["images/95a.jpeg", "images/95b.jpeg"]' data-search="jerry hossom revenge (early model) tanto blade. includes kydex sheath." data-price="850">
+      <div class="card-img">
+        <img src="images/95a.jpeg" alt="Jerry Hossom — Revenge (Early Model)" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 95</span>
+      </div>
+      <div class="card-body">
+        <h2>Jerry Hossom — Revenge (Early Model)</h2>
+        <p class="desc">Tanto blade. Includes kydex sheath.</p>
+        <div class="price">$850</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="96" data-imgs='["images/96a.jpeg", "images/96b.jpeg"]' data-search="david winston hunter " data-price="250">
+      <div class="card-img">
+        <img src="images/96a.jpeg" alt="David Winston — Hunter" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 96</span>
+      </div>
+      <div class="card-body">
+        <h2>David Winston — Hunter</h2>
+        
+        <div class="price">$250</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="97" data-imgs='["images/97a.jpeg", "images/97b.jpeg"]' data-search="arno bernard small trailing point hunter " data-price="110">
+      <div class="card-img">
+        <img src="images/97a.jpeg" alt="Arno Bernard — Small Trailing Point Hunter" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 97</span>
+      </div>
+      <div class="card-body">
+        <h2>Arno Bernard — Small Trailing Point Hunter</h2>
+        
+        <div class="price">$110</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="98" data-imgs='["images/98a.jpeg", "images/98b.jpeg"]' data-search="crawford knives kasper cutter black. includes kydex sheath." data-price="220">
+      <div class="card-img">
+        <img src="images/98a.jpeg" alt="Crawford Knives — Kasper Cutter" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 98</span>
+      </div>
+      <div class="card-body">
+        <h2>Crawford Knives — Kasper Cutter</h2>
+        <p class="desc">Black. Includes kydex sheath.</p>
+        <div class="price">$220</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="99" data-imgs='["images/99a.jpeg", "images/99b.jpeg"]' data-search="russell easler drop point hunter stag includes soft case." data-price="300">
+      <div class="card-img">
+        <img src="images/99a.jpeg" alt="Russell Easler — Drop Point Hunter Stag" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 99</span>
+      </div>
+      <div class="card-body">
+        <h2>Russell Easler — Drop Point Hunter Stag</h2>
+        <p class="desc">Includes soft case.</p>
+        <div class="price">$300</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="100" data-imgs='["images/100a.jpeg", "images/100b.jpeg"]' data-search="crkt van hoy snap fire 5010 new in box." data-price="60">
+      <div class="card-img">
+        <img src="images/100a.jpeg" alt="CRKT — Van Hoy Snap Fire 5010" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 100</span>
+      </div>
+      <div class="card-body">
+        <h2>CRKT — Van Hoy Snap Fire 5010</h2>
+        <p class="desc">New in box.</p>
+        <div class="price">$60</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="101" data-imgs='["images/101a.jpeg", "images/101b.jpeg"]' data-search="crkt hawk k-at includes original box and neck sheath." data-price="35">
+      <div class="card-img">
+        <img src="images/101a.jpeg" alt="CRKT — Hawk K-AT" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 101</span>
+      </div>
+      <div class="card-body">
+        <h2>CRKT — Hawk K-AT</h2>
+        <p class="desc">Includes original box and neck sheath.</p>
+        <div class="price">$35</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="102" data-imgs='["images/102a.jpeg", "images/102b.jpeg"]' data-search="crkt 2770 wrangell alaska pro hunter discontinued model. includes original box and sheath." data-price="100">
+      <div class="card-img">
+        <img src="images/102a.jpeg" alt="CRKT — 2770 Wrangell Alaska Pro Hunter" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 102</span>
+      </div>
+      <div class="card-body">
+        <h2>CRKT — 2770 Wrangell Alaska Pro Hunter</h2>
+        <p class="desc">Discontinued model. Includes original box and sheath.</p>
+        <div class="price">$100</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="103" data-imgs='["images/103a.jpeg", "images/103b.jpeg"]' data-search="tom krein tk1 stag includes leather and scales sheath." data-price="375">
+      <div class="card-img">
+        <img src="images/103a.jpeg" alt="Tom Krein — TK1 Stag" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 103</span>
+      </div>
+      <div class="card-body">
+        <h2>Tom Krein — TK1 Stag</h2>
+        <p class="desc">Includes leather and scales sheath.</p>
+        <div class="price">$375</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="104" data-imgs='["images/104a.jpeg", "images/104b.jpeg"]' data-search="don lozier desert ironwood hunter includes leather sheath." data-price="325">
+      <div class="card-img">
+        <img src="images/104a.jpeg" alt="Don Lozier — Desert Ironwood Hunter" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 104</span>
+      </div>
+      <div class="card-body">
+        <h2>Don Lozier — Desert Ironwood Hunter</h2>
+        <p class="desc">Includes leather sheath.</p>
+        <div class="price">$325</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="105" data-imgs='["images/105a.jpeg", "images/105b.jpeg"]' data-search="mike snody damasteel wharncliffe includes leather sheath." data-price="550">
+      <div class="card-img">
+        <img src="images/105a.jpeg" alt="Mike Snody — Damasteel Wharncliffe" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 105</span>
+      </div>
+      <div class="card-body">
+        <h2>Mike Snody — Damasteel Wharncliffe</h2>
+        <p class="desc">Includes leather sheath.</p>
+        <div class="price">$550</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="106" data-imgs='["images/106a.jpeg", "images/106b.jpeg"]' data-search="nathan house matador " data-price="240">
+      <div class="card-img">
+        <img src="images/106a.jpeg" alt="Nathan House — Matador" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 106</span>
+      </div>
+      <div class="card-body">
+        <h2>Nathan House — Matador</h2>
+        
+        <div class="price">$240</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="107" data-imgs='["images/107a.jpeg", "images/107b.jpeg"]' data-search="dave cole wharncliffe dagger includes leather sheath." data-price="100">
+      <div class="card-img">
+        <img src="images/107a.jpeg" alt="Dave Cole — Wharncliffe Dagger" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 107</span>
+      </div>
+      <div class="card-body">
+        <h2>Dave Cole — Wharncliffe Dagger</h2>
+        <p class="desc">Includes leather sheath.</p>
+        <div class="price">$100</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="108" data-imgs='["images/108a.jpeg", "images/108b.jpeg"]' data-search="blackjack knives model 5 - stag includes leather sheath." data-price="200">
+      <div class="card-img">
+        <img src="images/108a.jpeg" alt="Blackjack Knives — Model 5 - Stag" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 108</span>
+      </div>
+      <div class="card-body">
+        <h2>Blackjack Knives — Model 5 - Stag</h2>
+        <p class="desc">Includes leather sheath.</p>
+        <div class="price">$200</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="109" data-imgs='["images/109a.jpeg", "images/109b.jpeg"]' data-search="schrade cutlery uncle buck " data-price="50">
+      <div class="card-img">
+        <img src="images/109a.jpeg" alt="Schrade Cutlery — Uncle Buck" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 109</span>
+      </div>
+      <div class="card-body">
+        <h2>Schrade Cutlery — Uncle Buck</h2>
+        
+        <div class="price">$50</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="110" data-imgs='["images/110a.jpeg", "images/110b.jpeg"]' data-search="jim wharton stag & steel matte blade finish with orange handle. includes kydex sheath." data-price="90">
+      <div class="card-img">
+        <img src="images/110a.jpeg" alt="Jim Wharton — Stag & Steel" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 110</span>
+      </div>
+      <div class="card-body">
+        <h2>Jim Wharton — Stag & Steel</h2>
+        <p class="desc">Matte blade finish with orange handle. Includes kydex sheath.</p>
+        <div class="price">$90</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="111" data-imgs='["images/111a.jpeg", "images/111b.jpeg"]' data-search="tom watson flipper bright orange handle. includes soft case." data-price="450">
+      <div class="card-img">
+        <img src="images/111a.jpeg" alt="Tom Watson — Flipper" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 111</span>
+      </div>
+      <div class="card-body">
+        <h2>Tom Watson — Flipper</h2>
+        <p class="desc">Bright orange handle. Includes soft case.</p>
+        <div class="price">$450</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="112" data-imgs='["images/112a.jpeg", "images/112b.jpeg"]' data-search="dan h. harrison hunter includes leather sheath." data-price="475">
+      <div class="card-img">
+        <img src="images/112a.jpeg" alt="Dan H. Harrison — Hunter" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 112</span>
+      </div>
+      <div class="card-body">
+        <h2>Dan H. Harrison — Hunter</h2>
+        <p class="desc">Includes leather sheath.</p>
+        <div class="price">$475</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="113" data-imgs='["images/113a.jpeg", "images/113b.jpeg"]' data-search="jim wharton stag & steel wooden handle. includes leather sheath." data-price="95">
+      <div class="card-img">
+        <img src="images/113a.jpeg" alt="Jim Wharton — Stag & Steel" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 113</span>
+      </div>
+      <div class="card-body">
+        <h2>Jim Wharton — Stag & Steel</h2>
+        <p class="desc">Wooden handle. Includes leather sheath.</p>
+        <div class="price">$95</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="114" data-imgs='["images/114a.jpeg", "images/114b.jpeg"]' data-search="jim wharton stag & steel sub hilt wooden handle. includes leather sheath." data-price="255">
+      <div class="card-img">
+        <img src="images/114a.jpeg" alt="Jim Wharton — Stag & Steel Sub Hilt" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 114</span>
+      </div>
+      <div class="card-body">
+        <h2>Jim Wharton — Stag & Steel Sub Hilt</h2>
+        <p class="desc">Wooden handle. Includes leather sheath.</p>
+        <div class="price">$255</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="115" data-imgs='["images/115a.jpeg", "images/115b.jpeg"]' data-search="r. appleby small fixed necker purple handle. includes purple scaled leather sheath." data-price="105">
+      <div class="card-img">
+        <img src="images/115a.jpeg" alt="R. Appleby — Small Fixed Necker" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 115</span>
+      </div>
+      <div class="card-body">
+        <h2>R. Appleby — Small Fixed Necker</h2>
+        <p class="desc">Purple handle. Includes purple scaled leather sheath.</p>
+        <div class="price">$105</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="116" data-imgs='["images/116a.jpeg", "images/116b.jpeg"]' data-search="r. appleby small damascus fixed necker includes magnetic leather sheath." data-price="165">
+      <div class="card-img">
+        <img src="images/116a.jpeg" alt="R. Appleby — Small Damascus Fixed Necker" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 116</span>
+      </div>
+      <div class="card-body">
+        <h2>R. Appleby — Small Damascus Fixed Necker</h2>
+        <p class="desc">Includes magnetic leather sheath.</p>
+        <div class="price">$165</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="117" data-imgs='["images/117a.jpeg", "images/117b.jpeg"]' data-search="tom krein pocket bowie rag macarta mascus handle (2007). includes kydex sheath." data-price="425">
+      <div class="card-img">
+        <img src="images/117a.jpeg" alt="Tom Krein — Pocket Bowie" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 117</span>
+      </div>
+      <div class="card-body">
+        <h2>Tom Krein — Pocket Bowie</h2>
+        <p class="desc">Rag Macarta Mascus handle (2007). Includes kydex sheath.</p>
+        <div class="price">$425</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="118" data-imgs='["images/118a.jpeg", "images/118b.jpeg"]' data-search="tom krein tk1 wharncliffe blue jean twill micarta handle. some blade scratches from sheath use. includes kydex sheath." data-price="250">
+      <div class="card-img">
+        <img src="images/118a.jpeg" alt="Tom Krein — TK1 Wharncliffe" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 118</span>
+      </div>
+      <div class="card-body">
+        <h2>Tom Krein — TK1 Wharncliffe</h2>
+        <p class="desc">Blue Jean Twill Micarta handle. Some blade scratches from sheath use. Includes kydex sheath.</p>
+        <div class="price">$250</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="119" data-imgs='["images/119a.jpeg", "images/119b.jpeg"]' data-search="lynn griffith fixed wharncliffe includes kydex sheath." data-price="125">
+      <div class="card-img">
+        <img src="images/119a.jpeg" alt="Lynn Griffith — Fixed Wharncliffe" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 119</span>
+      </div>
+      <div class="card-body">
+        <h2>Lynn Griffith — Fixed Wharncliffe</h2>
+        <p class="desc">Includes kydex sheath.</p>
+        <div class="price">$125</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="120" data-imgs='["images/120a.jpeg"]' data-search="toxic all titanium toys (eric blair) flamed titanium spike includes kydex sheath." data-price="200">
+      <div class="card-img">
+        <img src="images/120a.jpeg" alt="Toxic All Titanium Toys (Eric Blair) — Flamed Titanium Spike" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 120</span>
+      </div>
+      <div class="card-body">
+        <h2>Toxic All Titanium Toys (Eric Blair) — Flamed Titanium Spike</h2>
+        <p class="desc">Includes kydex sheath.</p>
+        <div class="price">$200</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="121" data-imgs='["images/121a.jpeg", "images/121b.jpeg"]' data-search="pirela/hall collaboration l max (light modular axe) " data-price="200">
+      <div class="card-img">
+        <img src="images/121a.jpeg" alt="Pirela/Hall Collaboration — L Max (Light Modular Axe)" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 121</span>
+      </div>
+      <div class="card-body">
+        <h2>Pirela/Hall Collaboration — L Max (Light Modular Axe)</h2>
+        
+        <div class="price">$200</div>
+      </div>
+    </div>
+
+    <div class="card has-gallery" data-gallery="122" data-imgs='["images/122a.jpeg", "images/122b.jpeg"]' data-search="dervish knives (john gonzalez) fixed sheeba! mid-tech includes leather sheath." data-price="450">
+      <div class="card-img">
+        <img src="images/122a.jpeg" alt="Dervish Knives (John Gonzalez) — Fixed Sheeba! Mid-Tech" loading="eager" decoding="sync">
+        
+        <span class="id-badge">No. 122</span>
+      </div>
+      <div class="card-body">
+        <h2>Dervish Knives (John Gonzalez) — Fixed Sheeba! Mid-Tech</h2>
+        <p class="desc">Includes leather sheath.</p>
+        <div class="price">$450</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>KNIFE COLLECTION &nbsp;·&nbsp; AVAILABLE INVENTORY</footer>
+
+<!-- Lightbox -->
+<div id="lightbox">
+  <button id="lb-close">&#10005;</button>
+  <div id="lb-title"></div>
+  <div id="lb-main">
+    <img id="lb-img" src="" alt="">
+    <button id="lb-prev">&#8249;</button>
+    <button id="lb-next">&#8250;</button>
+  </div>
+  <div id="lb-thumbs"></div>
+  <div id="lb-counter"></div>
+</div>
+
+<script>
+  const lb      = document.getElementById('lightbox');
+  const lbImg   = document.getElementById('lb-img');
+  const lbTitle = document.getElementById('lb-title');
+  const lbThumbs= document.getElementById('lb-thumbs');
+  const lbCtr   = document.getElementById('lb-counter');
+  let imgs = [], cur = 0;
+
+  function openGallery(card) {
+    const raw = card.getAttribute('data-imgs');
+    if (!raw) return;
+    imgs = JSON.parse(raw);
+    if (!imgs.length) return;
+    cur = 0;
+    lbTitle.textContent = card.querySelector('h2').textContent;
+    buildThumbs();
+    showImg(0);
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function buildThumbs() {
+    lbThumbs.innerHTML = '';
+    imgs.forEach((src, i) => {
+      const t = document.createElement('img');
+      t.src = src; t.className = 'lb-thumb';
+      t.addEventListener('click', () => showImg(i));
+      lbThumbs.appendChild(t);
+    });
+  }
+
+  function showImg(i) {
+    cur = (i + imgs.length) % imgs.length;
+    lbImg.src = imgs[cur];
+    lbCtr.textContent = (cur + 1) + ' / ' + imgs.length;
+    document.querySelectorAll('.lb-thumb').forEach((t, j) => {
+      t.classList.toggle('active', j === cur);
+    });
+  }
+
+  function closeLB() {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+    imgs = []; lbImg.src = '';
+  }
+
+  document.getElementById('lb-close').addEventListener('click', closeLB);
+  document.getElementById('lb-prev').addEventListener('click', () => showImg(cur - 1));
+  document.getElementById('lb-next').addEventListener('click', () => showImg(cur + 1));
+  lb.addEventListener('click', e => { if (e.target === lb) closeLB(); });
+
+  document.addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLB();
+    if (e.key === 'ArrowLeft')  showImg(cur - 1);
+    if (e.key === 'ArrowRight') showImg(cur + 1);
+  });
+
+  document.querySelectorAll('.card.has-gallery').forEach(card => {
+    card.addEventListener('click', () => openGallery(card));
+  });
+
+  // ---- filtering ----
+  const allCards   = Array.from(document.querySelectorAll('.card'));
+  const fSearch    = document.getElementById('f-search');
+  const fMin       = document.getElementById('f-min');
+  const fMax       = document.getElementById('f-max');
+  const fClear     = document.getElementById('f-clear');
+  const fCount     = document.getElementById('f-count');
+  const totalCount = allCards.length;
+
+  function applyFilters() {
+    const q    = fSearch.value.trim().toLowerCase();
+    const minV = fMin.value !== '' ? parseFloat(fMin.value) : null;
+    const maxV = fMax.value !== '' ? parseFloat(fMax.value) : null;
+    let visible = 0;
+    allCards.forEach(card => {
+      const text  = card.dataset.search || '';
+      const price = card.dataset.price !== '' ? parseFloat(card.dataset.price) : null;
+      const textOk  = !q || text.includes(q);
+      const minOk   = minV === null || (price !== null && price >= minV);
+      const maxOk   = maxV === null || (price !== null && price <= maxV);
+      const show    = textOk && minOk && maxOk;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    fCount.textContent = visible < totalCount ? `${visible} of ${totalCount} shown` : '';
+  }
+
+  fSearch.addEventListener('input', applyFilters);
+  fMin.addEventListener('input', applyFilters);
+  fMax.addEventListener('input', applyFilters);
+  fClear.addEventListener('click', () => {
+    fSearch.value = ''; fMin.value = ''; fMax.value = '';
+    applyFilters();
+  });
+</script>
+</body>
+</html>
