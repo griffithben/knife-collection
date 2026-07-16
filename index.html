@@ -179,17 +179,28 @@
 
     #lb-close {
       position: absolute;
-      top: 20px;
-      right: 24px;
+      top: 16px;
+      right: 16px;
       font-size: 28px;
       color: #bd9540;
       cursor: pointer;
       line-height: 1;
-      background: none;
-      border: none;
-      padding: 4px 10px;
+      background: rgba(21,41,77,0.85);
+      border: 1px solid #bd9540;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1010;
+      -webkit-tap-highlight-color: transparent;
     }
     #lb-close:hover { color: #e6c878; }
+    @media (max-width: 768px) {
+      #lb-close { top: 12px; right: 12px; width: 52px; height: 52px; font-size: 22px; }
+      #lb-title { top: 18px; left: 72px; right: 72px; text-align: center; }
+    }
 
     #lb-title {
       position: absolute;
@@ -249,6 +260,10 @@
     #lb-prev:hover, #lb-next:hover { background: #15294d; }
     #lb-prev { left: -22px; }
     #lb-next { right: -22px; }
+    @media (max-width: 768px) {
+      #lb-prev { left: 8px; }
+      #lb-next { right: 8px; }
+    }
 
     #lb-thumbs {
       display: flex;
@@ -1880,9 +1895,10 @@
     card.addEventListener('click', () => openGallery(card));
   });
 
-  // ---- lightbox image zoom on hover ----
+  // ---- lightbox image zoom on hover (desktop only) ----
   const ZOOM = 2.5;
   const lbWrap = document.getElementById('lb-zoom-wrap');
+  const isTouchDevice = () => window.matchMedia('(hover: none)').matches;
 
   function syncWrap() {
     const r = lbImg.getBoundingClientRect();
@@ -1893,6 +1909,7 @@
   window.addEventListener('resize', syncWrap);
 
   lbImg.addEventListener('mousemove', function(e) {
+    if (isTouchDevice()) return;
     const rect = this.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width)  * 100;
     const y = ((e.clientY - rect.top)  / rect.height) * 100;
@@ -1900,6 +1917,7 @@
     this.style.transform = 'scale(' + ZOOM + ')';
   });
   lbImg.addEventListener('mouseleave', function() {
+    if (isTouchDevice()) return;
     this.style.transform = 'scale(1)';
     this.style.transformOrigin = 'center center';
   });
