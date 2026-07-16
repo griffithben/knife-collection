@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Knife Collection — For Sale</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; max-width: 100%; }
+    html { overflow-x: hidden; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -418,6 +419,8 @@
       .filter-divider { display: none; }
       .filter-count { margin-left: 0; text-align: center; }
       .filter-clear { width: 100%; }
+      main { padding: 20px 12px 60px; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
     }
 
     /* ---- footer ---- */
