@@ -1848,6 +1848,7 @@
     showImg(0);
     lb.classList.add('open');
     document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => requestAnimationFrame(syncWrap));
   }
 
   function buildThumbs() {
@@ -1901,11 +1902,18 @@
   const isTouchDevice = () => window.matchMedia('(hover: none)').matches;
 
   function syncWrap() {
+    if (isTouchDevice()) {
+      lbWrap.style.width  = '';
+      lbWrap.style.height = '';
+      return;
+    }
     const r = lbImg.getBoundingClientRect();
-    lbWrap.style.width  = r.width  + 'px';
-    lbWrap.style.height = r.height + 'px';
+    if (r.width > 0) {
+      lbWrap.style.width  = r.width  + 'px';
+      lbWrap.style.height = r.height + 'px';
+    }
   }
-  lbImg.addEventListener('load', syncWrap);
+  lbImg.addEventListener('load', () => requestAnimationFrame(syncWrap));
   window.addEventListener('resize', syncWrap);
 
   lbImg.addEventListener('mousemove', function(e) {
