@@ -6,7 +6,9 @@
   <title>Knife Collection — For Sale</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { overflow-x: hidden; max-width: 100vw; }
+    html, body { overflow-x: hidden; width: 100%; }
+    img { max-width: 100%; }
+    .page-wrap { width: 100%; overflow-x: hidden; position: relative; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -51,9 +53,11 @@
       text-align: right;
       line-height: 1.5;
     }
-    header .contact strong { color: #e6c878; display: block; }
+    header .contact strong { color: #e6c878; display: block; margin-bottom: 4px; }
     header .contact a { color: #bd9540; text-decoration: none; }
     header .contact a:hover { text-decoration: underline; }
+    .contact-links { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: flex-end; }
+    .contact-sep { color: #4a6080; }
 
     /* ---- grid ---- */
     main {
@@ -381,36 +385,55 @@
     .filter-clear:hover { border-color: #bd9540; color: #bd9540; }
 
     /* ---- mobile ---- */
-    @media (max-width: 768px) {
+    @media (max-width: 480px) {
       header {
         flex-direction: column;
         align-items: center;
         text-align: center;
-        padding: 20px 16px;
+        padding: 20px 12px;
+        width: 100%;
       }
       header .contact {
+        font-size: 13px;
         text-align: center;
-        font-size: 14px;
-        word-break: break-all;
+        width: 100%;
+      }
+      .contact-links {
+        justify-content: center;
+        width: 100%;
       }
       .filter-bar {
         flex-direction: column;
-        align-items: stretch;
-        padding: 12px 16px;
+        align-items: center;
+        padding: 12px;
         gap: 8px;
+        width: 100%;
+        text-align: center;
       }
       .filter-bar label { white-space: normal; }
       .filter-search {
-        width: 100%;
+        width: 90%;
         max-width: 100%;
+        min-width: 0;
+        font-size: 16px;
       }
       .filter-divider { display: none; }
-      .price-range { width: 100%; }
-      .filter-price { width: 45%; min-width: 0; }
+      .price-range {
+        flex-direction: column;
+        align-items: center;
+        width: 90%;
+        gap: 8px;
+      }
+      .filter-price {
+        width: 100%;
+        min-width: 0;
+        font-size: 16px;
+      }
+      .price-sep { display: none; }
       .filter-count { margin-left: 0; text-align: center; white-space: normal; }
-      .filter-clear { width: 100%; white-space: normal; }
-      main { padding: 16px 12px 60px; }
-      .grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+      .filter-clear { width: 90%; white-space: normal; }
+      main { padding: 12px 10px 60px; }
+      .grid { grid-template-columns: 1fr; gap: 14px; }
     }
 
     /* ---- footer ---- */
@@ -425,16 +448,21 @@
   </style>
 </head>
 <body>
+<div class="page-wrap">
 
 <header>
   <div>
     <div class="brand">Custom Knife Collection</div>
     <h1>For Sale</h1>
-    <div class="count">107 knives available</div>
+    <div class="count">104 knives available</div>
   </div>
   <div class="contact">
     <strong>Interested in a knife? Contact me at:</strong>
-    Email: <a href="mailto:griffith.ben@gmail.com">griffith.ben@gmail.com</a> &nbsp;·&nbsp; USN: <a href="https://www.usnv2.net/u/griffithben/summary" target="_blank">griffithben</a>
+    <span class="contact-links">
+      <a href="mailto:griffith.ben@gmail.com">griffith.ben@gmail.com</a>
+      <span class="contact-sep">·</span>
+      <a href="https://www.usnv2.net/u/griffithben/summary" target="_blank">USN: griffithben</a>
+    </span>
   </div>
 </header>
 
@@ -975,19 +1003,6 @@
       </div>
     </div>
 
-    <div class="card has-gallery" data-gallery="56" data-imgs='["images/56a.jpeg", "images/56b.jpeg"]' data-search="56 graham knives pocket kukri blue jean twill handle. includes sheath." data-price="450">
-      <div class="card-img">
-        <img src="images/56a.jpeg" alt="Graham Knives — Pocket Kukri" loading="eager">
-        
-        <span class="id-badge">No. 56</span>
-      </div>
-      <div class="card-body">
-        <h2>Graham Knives — Pocket Kukri</h2>
-        <p class="desc">Blue Jean Twill handle. Includes sheath.</p>
-        <div class="price">$450</div>
-      </div>
-    </div>
-
     <div class="card has-gallery" data-gallery="57" data-imgs='["images/57a.jpeg", "images/57b.jpeg"]' data-search="57 graham knives karambit damasteel blade, burl wood handle. includes sheath." data-price="700">
       <div class="card-img">
         <img src="images/57a.jpeg" alt="Graham Knives — Karambit" loading="eager">
@@ -1258,19 +1273,6 @@
         <h2>Kim Breed — Skeleton Necker</h2>
         
         <div class="price">$50</div>
-      </div>
-    </div>
-
-    <div class="card has-gallery" data-gallery="78" data-imgs='["images/78a.jpeg", "images/78b.jpeg"]' data-search="78 begg knives kiridashi neck knife #005 includes kydex sheath." data-price="175">
-      <div class="card-img">
-        <img src="images/78a.jpeg" alt="Begg Knives — Kiridashi Neck Knife #005" loading="eager">
-        
-        <span class="id-badge">No. 78</span>
-      </div>
-      <div class="card-body">
-        <h2>Begg Knives — Kiridashi Neck Knife #005</h2>
-        <p class="desc">Includes kydex sheath.</p>
-        <div class="price">$175</div>
       </div>
     </div>
 
@@ -1781,19 +1783,6 @@
       </div>
     </div>
 
-    <div class="card has-gallery" data-gallery="118" data-imgs='["images/118a.jpeg", "images/118b.jpeg"]' data-search="118 tom krein tk1 wharncliffe blue jean twill micarta handle. some blade scratches from sheath use. includes kydex sheath." data-price="250">
-      <div class="card-img">
-        <img src="images/118a.jpeg" alt="Tom Krein — TK1 Wharncliffe" loading="eager">
-        
-        <span class="id-badge">No. 118</span>
-      </div>
-      <div class="card-body">
-        <h2>Tom Krein — TK1 Wharncliffe</h2>
-        <p class="desc">Blue Jean Twill Micarta handle. Some blade scratches from sheath use. Includes kydex sheath.</p>
-        <div class="price">$250</div>
-      </div>
-    </div>
-
     <div class="card has-gallery" data-gallery="119" data-imgs='["images/119a.jpeg", "images/119b.jpeg"]' data-search="119 lynn griffith fixed wharncliffe includes kydex sheath." data-price="125">
       <div class="card-img">
         <img src="images/119a.jpeg" alt="Lynn Griffith — Fixed Wharncliffe" loading="eager">
@@ -1849,6 +1838,8 @@
 </main>
 
 <footer>KNIFE COLLECTION &nbsp;·&nbsp; AVAILABLE INVENTORY</footer>
+
+</div><!-- /.page-wrap -->
 
 <!-- Lightbox -->
 <div id="lightbox">
