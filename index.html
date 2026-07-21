@@ -466,7 +466,7 @@
   <div>
     <div class="brand">Custom Knife Collection</div>
     <h1>For Sale</h1>
-    <div class="count">93 knives available</div>
+    <div class="count">92 knives available</div>
   </div>
   <div class="contact">
     <strong>Interested in a knife? Contact me at:</strong>
@@ -1099,19 +1099,6 @@
         <h2>PML Knives — Paul LeToruneau Recurve Fighter</h2>
         
         <div class="price">$300</div>
-      </div>
-    </div>
-
-    <div class="card has-gallery" data-gallery="71" data-imgs='["images/71a.jpeg", "images/71b.jpeg"]' data-search="71 walter brend model 2-7 brend made rescue series includes camo sheath." data-price="1800" data-maker="walter brend" data-id="71">
-      <div class="card-img">
-        <img src="images/71a.jpeg" alt="Walter Brend — Model 2-7 Brend Made Rescue Series" loading="eager">
-        
-        <span class="id-badge">No. 71</span>
-      </div>
-      <div class="card-body">
-        <h2>Walter Brend — Model 2-7 Brend Made Rescue Series</h2>
-        <p class="desc">Includes camo sheath.</p>
-        <div class="price">$1,800</div>
       </div>
     </div>
 
@@ -1844,17 +1831,32 @@
   const totalCount = allCards.length;
 
   function applyFilters() {
-    const q    = fSearch.value.trim().toLowerCase();
+    const raw  = fSearch.value.trim();
+    const q    = raw.toLowerCase();
     const minV = fMin.value !== '' ? parseFloat(fMin.value) : null;
     const maxV = fMax.value !== '' ? parseFloat(fMax.value) : null;
+
+    // Comma-separated ID list mode: "11, 16, 47"
+    const idListMatch = raw.match(/^[\d][\d\s,]*$/);
+    const idSet = idListMatch
+      ? new Set(raw.split(',').map(s => s.trim()).filter(Boolean))
+      : null;
+
     let visible = 0;
     allCards.forEach(card => {
       const text  = card.dataset.search || '';
       const price = card.dataset.price !== '' ? parseFloat(card.dataset.price) : null;
-      const textOk  = !q || text.includes(q);
-      const minOk   = minV === null || (price !== null && price >= minV);
-      const maxOk   = maxV === null || (price !== null && price <= maxV);
-      const show    = textOk && minOk && maxOk;
+      const cardId = (card.dataset.id || '').toString();
+
+      let textOk;
+      if (idSet) {
+        textOk = idSet.has(cardId);
+      } else {
+        textOk = !q || text.includes(q);
+      }
+      const minOk = minV === null || (price !== null && price >= minV);
+      const maxOk = maxV === null || (price !== null && price <= maxV);
+      const show  = textOk && minOk && maxOk;
       card.style.display = show ? '' : 'none';
       if (show) visible++;
     });
